@@ -7,31 +7,19 @@ import { TiMessageTyping } from "react-icons/ti";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Responsive hook
-const useWindowWidth = () => {
-  const [width, setWidth] = useState(window.innerWidth);
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-  return width;
-};
-
 // Page Entry
 export default function Home() {
-  const width = useWindowWidth();
   return (
-    <div className="w-[100vw] h-[100vh] bg-slate-950 text-zinc-100">
-      <Navbar width={width} />
-      <Hero width={width} />
+    <div className="w-screen h-screen bg-slate-950 text-zinc-100">
+      <Navbar />
+      <Hero />
       <Footer />
     </div>
   );
 }
 
 // Navbar
-function Navbar({ width }: { width: number }) {
+function Navbar() {
   const taglines = [
     "Connect Instantly",
     "React with Emojis",
@@ -41,23 +29,20 @@ function Navbar({ width }: { width: number }) {
   const [currentTagline, setCurrentTagline] = useState(0);
 
   useEffect(() => {
-    if (width > 380) {
-      const interval = setInterval(() => {
-        setCurrentTagline((prev) => (prev + 1) % taglines.length);
-      }, 3000); // Change every 3 seconds
-      return () => clearInterval(interval);
-    }
-  }, [width]);
+    const interval = setInterval(() => {
+      setCurrentTagline((prev) => (prev + 1) % taglines.length);
+    }, 3000); // Change every 3 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="w-full h-[10%] bg-slate-900 text-white flex items-center justify-between px-4 sm:px-10">
       <div className="font-bold text-3xl">ChatFlow</div>
       <div>
-        {width <= 380 ? (
-          <div className="text-sm font-medium bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">
-            ChatFlow: Connect Now
-          </div>
-        ) : (
+        <div className="block sm:hidden text-sm font-medium bg-gradient-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">
+          ChatFlow: Connect Now
+        </div>
+        <div className="hidden sm:block">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentTagline}
@@ -70,25 +55,23 @@ function Navbar({ width }: { width: number }) {
               {taglines[currentTagline]}
             </motion.div>
           </AnimatePresence>
-        )}
+        </div>
       </div>
     </div>
   );
 }
 
 // Hero Section
-function Hero({ width }: { width: number }) {
+function Hero() {
   return (
     <div className="w-full min-h-[80%]">
-      <div
-        className={`grid ${width <= 500 ? "grid-rows-2" : "grid-cols-2"} w-full h-[80%]`}
-      >
+      <div className="grid grid-rows-2 md:grid-rows-1 md:grid-cols-2 w-full h-[80%]">
         {/* Left: Text */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-full h-full flex flex-col justify-center px-8 sm:pl-24"
+          className="w-full h-full flex flex-col justify-center px-8 sm:px-24"
         >
           <div className="font-extrabold text-5xl sm:text-6xl text-white leading-tight">
             <h1>Connect in</h1>
@@ -100,13 +83,15 @@ function Hero({ width }: { width: number }) {
             <p>No downloads, no hassle — just start chatting.</p>
           </div>
           <div className="pt-8">
-            <Link href="/chat"><motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-indigo-600 px-8 py-4 rounded-full cursor-pointer font-medium shadow-md hover:bg-indigo-500 transition-all text-white"
-            >
-              Get Started
-            </motion.button></Link>
+            <Link href="/chat">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-indigo-600 px-8 py-4 rounded-full cursor-pointer font-medium shadow-md hover:bg-indigo-500 transition-all text-white"
+              >
+                Get Started
+              </motion.button>
+            </Link>
           </div>
         </motion.div>
 
