@@ -37,7 +37,7 @@ export default function ChatPage() {
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:3001");
+    ws.current = new WebSocket("https://chatflow-backend-1-urtv.onrender.com");
     ws.current.onopen = () => {
       ws.current?.send(JSON.stringify({ type: "join", roomId, userName }));
     };
