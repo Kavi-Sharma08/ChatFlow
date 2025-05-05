@@ -1,8 +1,15 @@
 import WebSocket, { WebSocketServer } from "ws";
 
-const wss = new WebSocketServer({ port: 3001 }, () => {
-  console.log("✅ WebSocket server started on ws://localhost:3001");
-});
+// Define types for message payloads
+interface MessagePayload {
+  type: string;
+  roomId?: string;
+  userName?: string;
+  users?: string[];
+  text?: string;
+  targetIndex?: number;
+  emoji?: string;
+}
 
 type ClientMeta = {
   socket: WebSocket;
@@ -10,14 +17,18 @@ type ClientMeta = {
   userName: string;
 };
 
+const wss = new WebSocketServer({ port: 3001 }, () => {
+  console.log("✅ WebSocket server started on ws://localhost:3001");
+});
+
 const rooms: Record<string, Set<string>> = {};
 const clientMeta = new Map<WebSocket, ClientMeta>();
 
 wss.on("connection", (ws) => {
   ws.on("message", (msg) => {
-    const data = JSON.parse(msg.toString());
+    const data: MessagePayload = JSON.parse(msg.toString());
     if (data.type === "join") {
-      const roomId = data.roomId;
+      const roomId = data.roomId ?? "";
       const userName = data.userName || "Anonymous";
 
       clientMeta.set(ws, { socket: ws, roomId, userName });
@@ -38,10 +49,11 @@ wss.on("connection", (ws) => {
       const meta = clientMeta.get(ws);
       if (!meta) return;
 
-      const message = {
-        ...data,
+      const message: MessagePayload = {
+        type: data.type,
         userName: meta.userName,
         roomId: meta.roomId,
+        text: data.text,
       };
 
       // Broadcast to others in the same room
@@ -53,7 +65,7 @@ wss.on("connection", (ws) => {
       if (!meta) return;
 
       // Broadcast reaction (with target index and emoji) to others
-      const reactionPayload = {
+      const reactionPayload: MessagePayload = {
         type: "reaction",
         roomId: meta.roomId,
         targetIndex: data.targetIndex,
@@ -64,12 +76,12 @@ wss.on("connection", (ws) => {
     }
 
     if (data.type === "status") {
-      console.log(data)
+      console.log(data);
       const meta = clientMeta.get(ws);
       if (!meta) return;
 
       // Broadcast status to everyone in the room
-      const statusPayload = {
+      const statusPayload: MessagePayload = {
         type: "status",
         text: data.text,
         userName: meta.userName,
@@ -101,7 +113,7 @@ wss.on("connection", (ws) => {
 });
 
 // Helper: Broadcast to all clients in a room
-function broadcastToRoom(roomId: string, message: any, excludeSocket?: WebSocket) {
+function broadcastToRoom(roomId: string, message: MessagePayload, excludeSocket?: WebSocket) {
   wss.clients.forEach((client) => {
     const meta = clientMeta.get(client);
     if (

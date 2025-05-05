@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/dotenv": "^6.1.1",
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.18.1",
+    "dotenv": "^16.5.0",
     "emoji-picker-react": "^4.12.2",
     "framer-motion": "^12.9.4",
     "next": "15.3.1",
