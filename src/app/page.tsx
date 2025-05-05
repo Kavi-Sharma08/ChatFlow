@@ -1,5 +1,4 @@
 "use client";
-import { FiMenu } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { ImUsers } from "react-icons/im";
