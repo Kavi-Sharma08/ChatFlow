@@ -210,7 +210,7 @@ export default function ChatPage() {
           <div className="flex gap-2">
             <input
               type="text"
-              className="flex-1 px-4 py-2 rounded text-black focus:outline-none"
+              className="flex-1 px-4 py-2 rounded text-white focus:outline-none"
               placeholder="Type your message..."
               value={input}
               onChange={handleTyping}
